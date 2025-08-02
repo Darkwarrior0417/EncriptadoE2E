@@ -172,10 +172,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="E2EE.cpp" />
+    <ClCompile Include="NetworkHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CryptoHelper.h" />
     <ClInclude Include="include\Prerequisites.h" />
+    <ClInclude Include="NetworkHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

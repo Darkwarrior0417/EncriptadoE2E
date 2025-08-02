@@ -22,4 +22,12 @@
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\CryptoHelper.h">
+      <Filter>Archivos de encabezado\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Prerequisites.h">
+      <Filter>Archivos de encabezado\Includes</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

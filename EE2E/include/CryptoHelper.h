@@ -6,7 +6,7 @@
 class
 	CryptoHelper {
 public:
-	CryptoHelper() = default;
+	CryptoHelper();
 	~CryptoHelper();
 
 	// RSA
@@ -38,6 +38,6 @@ public:
 
 private:
 	RSA* rsaKeyPair;        // Par de claves propia
-	RSA* peerPublicKey;     // Clave p�blica del peer
+	RSA* peerPublicKey;     // Clave publica del peer
 	unsigned char aesKey[32]; // Clave AES-256
 };

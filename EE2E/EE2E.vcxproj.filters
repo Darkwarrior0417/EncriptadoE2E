@@ -24,6 +24,9 @@
     <ClCompile Include="NetworkHelper.cpp">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
+    <ClCompile Include="CryptoHelper.cpp">
+      <Filter>Archivos de recursos</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CryptoHelper.h">
@@ -32,7 +35,10 @@
     <ClInclude Include="include\Prerequisites.h">
       <Filter>Archivos de encabezado\Includes</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkHelper.h">
+    <ClInclude Include="include\Server.h">
+      <Filter>Archivos de encabezado\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkHelper.h">
       <Filter>Archivos de encabezado\Includes</Filter>
     </ClInclude>
   </ItemGroup>

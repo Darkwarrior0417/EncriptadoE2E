@@ -1,83 +1,81 @@
-#pragma once
+ï»¿#pragma once
 #include "Prerequisites.h"
-#include <WinSock2.h>
-#include <WS2tcpip.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 
 class NetworkHelper {
 public:
-    /**
-     * @brief Constructor. Inicializa Winsock.
-     */
-    NetworkHelper();
+	NetworkHelper();
+	~NetworkHelper();
 
-    /**
-     * @brief Destructor. Libera recursos de Winsock.
-     */
-    ~NetworkHelper();
+	/**
+	 * @brief Inicia un servidor en el puerto indicado.
+	 * @return true si se iniciÃ³, false si fallÃ³.
+	 */
+	bool
+	StartServer(int port);
 
-    // Server mode
-    /**
-     * @brief Inicia el servidor en el puerto dado.
-     * @param port Puerto en el que escuchar.
-     * @return true si se inicia correctamente.
-     */
-    bool StartServer(int port);
+	/**
+	 * @brief Acepta un cliente entrante.
+	 */
+	SOCKET
+	AcceptClient();
 
-    /**
-     * @brief Acepta una conexión entrante.
-     * @return Socket del cliente conectado.
-     */
-    SOCKET AcceptClient();
+	// Cliente
 
-    // Client mode
-    /**
-     * @brief Conecta al servidor remoto.
-     * @param ip Dirección IP del servidor.
-     * @param port Puerto del servidor.
-     * @return true si la conexión fue exitosa.
-     */
-    bool ConnectToServer(const std::string& ip, int port);
+	/**
+	 * @brief Conecta a un servidor por IP y puerto.
+	 */
+	bool
+	ConnectToServer(const std::string& ip, int port);
 
-    // Send and receive data
-    /**
-     * @brief Envía datos como string.
-     * @param socket Socket destino.
-     * @param data Datos a enviar.
-     * @return true si se envía correctamente.
-     */
-    bool SendData(SOCKET socket, const std::string& data);
+	// EnvÃ­o y recepciÃ³n
 
-    /**
-     * @brief Envía datos como vector de bytes.
-     * @param socket Socket destino.
-     * @param data Datos a enviar.
-     * @return true si se envía correctamente.
-     */
-    bool SendData(SOCKET socket, const std::vector<unsigned char>& data);
+	/**
+	 * @brief EnvÃ­a texto por el socket.
+	 */
+	bool
+	SendData(SOCKET socket, const std::string& data);
 
-    /**
-     * @brief Recibe datos como string.
-     * @param socket Socket desde el cual recibir.
-     * @return Datos recibidos.
-     */
-    std::string ReceiveData(SOCKET socket);
+	/**
+	 * @brief EnvÃ­a datos binarios.
+	 */
+	bool
+	SendData(SOCKET socket, const std::vector<unsigned char>& data);
 
-    /**
-     * @brief Recibe datos como vector de bytes.
-     * @param socket Socket desde el cual recibir.
-     * @param size Cantidad esperada (0 = dinámica).
-     * @return Datos recibidos.
-     */
-    std::vector<unsigned char> ReceiveData(SOCKET socket, int size = 0);
+	/**
+	 * @brief Recibe texto del socket.
+	 */
+	std::string
+	ReceiveData(SOCKET socket);
 
-    /**
-     * @brief Cierra el socket dado.
-     * @param socket Socket a cerrar.
-     */
-    void close(SOCKET socket);
+	/**
+	 * @brief Recibe datos binarios.
+	 */
+	std::vector<unsigned char>
+	ReceiveDataBinary(SOCKET socket, int size = 0);
 
+	/**
+	 * @brief Cierra un socket.
+	 */
+	void
+	close(SOCKET socket);
+
+	/**
+	 * @brief EnvÃ­a todos los bytes indicados.
+	 */
+	bool
+	SendAll(SOCKET s, const unsigned char* data, int len);
+
+	/**
+	 * @brief Recibe exactamente la cantidad indicada de bytes.
+	 */
+	bool
+	ReceiveExact(SOCKET s, unsigned char* out, int len);
+
+public:
+	SOCKET m_serverSocket = -1;
 private:
-    SOCKET m_serverSocket = -1;
-    bool m_initialized;
+	bool m_initialized;
 };

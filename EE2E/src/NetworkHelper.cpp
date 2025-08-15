@@ -1,0 +1,145 @@
+﻿#include "NetworkHelper.h"
+
+NetworkHelper::NetworkHelper() : m_serverSocket(INVALID_SOCKET), m_initialized(false) {
+	// Inicializa Winsock
+	WSADATA wsaData;
+	int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (result != 0) {
+		std::cerr << "WSAStartup failed: " << result << std::endl;
+	}
+	else {
+		m_initialized = true;
+	}
+}
+
+NetworkHelper::~NetworkHelper() {
+	if (m_serverSocket != INVALID_SOCKET) {
+		closesocket(m_serverSocket);
+	}
+	if (m_initialized) {
+		WSACleanup();
+	}
+}
+
+bool
+NetworkHelper::StartServer(int port) {
+	// Crea socket TCP
+	m_serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (m_serverSocket == INVALID_SOCKET) {
+		std::cerr << "Error creando socket: " << WSAGetLastError() << std::endl;
+		return false;
+	}
+
+	// Dirección del servidor
+	sockaddr_in serverAddress{};
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_port = htons(port);
+	serverAddress.sin_addr.s_addr = INADDR_ANY;
+
+	// Asocia socket a dirección y puerto
+	if (bind(m_serverSocket, (sockaddr*)&serverAddress, sizeof(serverAddress)) == SOCKET_ERROR) {
+		std::cerr << "Error en bind: " << WSAGetLastError() << std::endl;
+		closesocket(m_serverSocket);
+		m_serverSocket = INVALID_SOCKET;
+		return false;
+	}
+
+	// Escucha conexiones
+	if (listen(m_serverSocket, SOMAXCONN) == SOCKET_ERROR) {
+		std::cerr << "Error en listen: " << WSAGetLastError() << std::endl;
+		closesocket(m_serverSocket);
+		m_serverSocket = INVALID_SOCKET;
+		return false;
+	}
+
+	std::cout << "Servidor iniciado en puerto " << port << std::endl;
+	return true;
+}
+
+SOCKET
+NetworkHelper::AcceptClient() {
+	SOCKET clientSocket = accept(m_serverSocket, nullptr, nullptr);
+	if (clientSocket == INVALID_SOCKET) {
+		std::cerr << "Error aceptando cliente: " << WSAGetLastError() << std::endl;
+		return INVALID_SOCKET;
+	}
+	std::cout << "Cliente conectado." << std::endl;
+	return clientSocket;
+}
+
+bool
+NetworkHelper::ConnectToServer(const std::string& ip, int port) {
+	// Crea socket TCP
+	m_serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (m_serverSocket == INVALID_SOCKET) {
+		std::cerr << "Error creando socket: " << WSAGetLastError() << std::endl;
+		return false;
+	}
+
+	// Dirección del servidor
+	sockaddr_in serverAddress{};
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_port = htons(port);
+	inet_pton(AF_INET, ip.c_str(), &serverAddress.sin_addr);
+
+	// Conecta
+	if (connect(m_serverSocket, (sockaddr*)&serverAddress, sizeof(serverAddress)) == SOCKET_ERROR) {
+		std::cerr << "Error conectando al servidor: " << WSAGetLastError() << std::endl;
+		closesocket(m_serverSocket);
+		m_serverSocket = INVALID_SOCKET;
+		return false;
+	}
+	std::cout << "Conectado al servidor " << ip << ":" << port << std::endl;
+	return true;
+}
+
+bool
+NetworkHelper::SendData(SOCKET socket, const std::string& data) {
+	return send(socket, data.c_str(), static_cast<int>(data.size()), 0) != SOCKET_ERROR;
+}
+
+bool
+NetworkHelper::SendData(SOCKET socket, const std::vector<unsigned char>& data) {
+	return SendAll(socket, data.data(), static_cast<int>(data.size()));
+}
+
+std::string
+NetworkHelper::ReceiveData(SOCKET socket) {
+	char buffer[4096] = {};
+	int len = recv(socket, buffer, sizeof(buffer), 0);
+	return std::string(buffer, len);
+}
+
+std::vector<unsigned char>
+NetworkHelper::ReceiveDataBinary(SOCKET socket, int size) {
+	std::vector<unsigned char> buf(size);
+	if (!ReceiveExact(socket, buf.data(), size)) return {};
+	return buf;
+}
+
+void
+NetworkHelper::close(SOCKET socket) {
+	closesocket(socket);
+}
+
+bool
+NetworkHelper::SendAll(SOCKET s, const unsigned char* data, int len) {
+	int sent = 0;
+	while (sent < len) {
+		int n = send(s, (const char*)data + sent, len - sent, 0);
+		if (n == SOCKET_ERROR) return false;
+		sent += n;
+	}
+	return true;
+}
+
+bool
+NetworkHelper::ReceiveExact(SOCKET s, unsigned char* out, int len) {
+	int recvd = 0;
+	while (recvd < len) {
+		int n = recv(s, (char*)out + recvd, len - recvd, 0);
+		if (n <= 0) return false;
+		recvd += n;
+	}
+	return true;
+}

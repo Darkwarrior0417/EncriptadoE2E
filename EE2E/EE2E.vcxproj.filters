@@ -18,13 +18,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="E2EE.cpp">
+    <ClCompile Include="src\Client.cpp">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkHelper.cpp">
+    <ClCompile Include="src\NetworkHelper.cpp">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
-    <ClCompile Include="CryptoHelper.cpp">
+    <ClCompile Include="src\E2EE.cpp">
+      <Filter>Archivos de recursos</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CryptoHelper.cpp">
+      <Filter>Archivos de recursos</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,6 +45,9 @@
       <Filter>Archivos de encabezado\Includes</Filter>
     </ClInclude>
     <ClInclude Include="include\NetworkHelper.h">
+      <Filter>Archivos de encabezado\Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Client.h">
       <Filter>Archivos de encabezado\Includes</Filter>
     </ClInclude>
   </ItemGroup>
